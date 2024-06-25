@@ -207,6 +207,42 @@ function displayBackgroundImage(type, backgroundPath) {
   }
 }
 
+async function displaySlider() {
+  const { results } = await fetchAPIData("movie/now_playing");
+  console.log(results);
+  results.forEach((result) => {
+    // console.log(`https://image.tmdb.org/t/p/original/${result.poster_path}`);
+    const div = document.createElement("div");
+    div.classList.add("swiper-slide");
+    div.innerHTML = `<a href="movie-details.html?id=${result.id}">
+    <img src="https://image.tmdb.org/t/p/w500/${result.poster_path} alt="${
+      result.name
+    }>
+    </a>
+    <h4 class="swiper-rating"><i class="fas fa-star text-secondary"></i>
+    ${result.vote_average.toFixed(1)}</h4>`;
+    document.querySelector(".swiper-wrapper").appendChild(div);
+    initSwiper();
+  });
+}
+
+function initSwiper() {
+  const swiper = new Swiper(".swiper", {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteration: false,
+    },
+    breakpoints: {
+      500: { slidesPerView: 2 },
+      700: { slidesPerView: 2 },
+      1200: { slidesPerView: 4 },
+    },
+  });
+}
 // fetch data from TMDB API
 async function fetchAPIData(endpoint) {
   const API_KEY = "327424c116e9fc641f8fad630575a4ee";
@@ -244,6 +280,7 @@ function init() {
     case "/":
     case "index.html":
       displayPopularMovies();
+      displaySlider();
       break;
     case "/shows.html":
       displayPopularShows();
